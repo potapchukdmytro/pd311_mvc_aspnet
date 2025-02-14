@@ -35,5 +35,59 @@ namespace pd311_mvc_aspnet.Controllers
 
             return RedirectToAction("Index");
         }
+
+        public IActionResult Update(string? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var category = _context.Categories.FirstOrDefault(c => c.Id == id);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            return View(category);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(Category model)
+        {
+            _context.Categories.Update(model);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Delete(string? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var category = _context.Categories.FirstOrDefault(c => c.Id == id);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            return View(category);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(Category model)
+        {
+            _context.Categories.Remove(model);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
     }
 }
