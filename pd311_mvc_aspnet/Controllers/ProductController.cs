@@ -1,35 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using pd311_mvc_aspnet.Data;
 using pd311_mvc_aspnet.Models;
+using pd311_mvc_aspnet.Repositories.Products;
+using pd311_mvc_aspnet.Services.Image;
 using pd311_mvc_aspnet.ViewModels;
 
 namespace pd311_mvc_aspnet.Controllers
 {
-    public class ProductController : Controller
+    public class ProductController
+        (IProductRepository productRepository, AppDbContext context, IImageService imageService) 
+        : Controller
     {
-        private readonly AppDbContext _context;
-        private readonly IWebHostEnvironment _environment;
-
-        public ProductController(AppDbContext context, IWebHostEnvironment environment)
+        public async Task<IActionResult> IndexAsync()
         {
-            _context = context;
-            _environment = environment;
-        }
-
-        public IActionResult Index()
-        {
-            var products = _context.Products
-                .Include(p => p.Category)
-                .AsEnumerable();
+            var products = await productRepository.GetAllAsync();
 
             return View(products);
         }
 
         public IActionResult Create()
         {
-            var categories = _context.Categories.AsEnumerable();
+            var categories = context.Categories.AsEnumerable();
 
             var viewModel = new CreateProductVM
             {
@@ -47,43 +39,56 @@ namespace pd311_mvc_aspnet.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([FromForm] CreateProductVM viewModel)
+        public async Task<IActionResult> CreateAsync([FromForm] CreateProductVM viewModel)
         {
             string? imagePath = null;
 
             if(viewModel.File != null)
             {
-                imagePath = SaveImage(viewModel.File);
+                imagePath = await imageService.SaveImageAsync(viewModel.File, Settings.ProductsImagesPath);
             }
 
             viewModel.Product.Image = imagePath;
             viewModel.Product.Id = Guid.NewGuid().ToString();
-            _context.Products.Add(viewModel.Product);
-            _context.SaveChanges();
+            await productRepository.CreateAsync(viewModel.Product);
 
             return RedirectToAction("Index");
         }
 
-        private string? SaveImage(IFormFile file)
+        public async Task<IActionResult> DeleteAsync(string? id)
         {
-            var types = file.ContentType.Split("/");
-            if (types[0] != "image")
+            if(id == null)
             {
-                return null;
+                return NotFound();
             }
 
-            string fileName = $"{Guid.NewGuid()}.{types[1]}";
-            string imagesPath = Path.Combine(_environment.WebRootPath, "images", "products");
-            string filePath = Path.Combine(imagesPath, fileName);
-            using (var stream = file.OpenReadStream())
+            var product = await productRepository.FindByIdAsync(id);
+
+            if (product == null)
             {
-                using (var fileStream = System.IO.File.Create(filePath))
-                {
-                    stream.CopyTo(fileStream);
-                }
+                return NotFound();
             }
 
-            return fileName;
+            return View(product);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAsync(Product model)
+        {
+            string? imageName = model.Image;
+
+            if (model.Id == null)
+                return NotFound();
+
+            var res = await productRepository.DeleteAsync(model.Id);
+
+            if (res && imageName != null)
+            {
+                imageService.DeleteFile(Path.Combine(Settings.ProductsImagesPath, imageName));
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

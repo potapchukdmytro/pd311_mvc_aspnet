@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using pd311_mvc_aspnet.Data;
 using pd311_mvc_aspnet.Models;
+using pd311_mvc_aspnet.Validation;
 
 namespace pd311_mvc_aspnet.Controllers
 {
@@ -28,6 +29,13 @@ namespace pd311_mvc_aspnet.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Category model)
         {
+            var validator = new CategoryValidator();
+
+            var result = validator.Validate(model);
+
+            if (!result.IsValid)
+                return BadRequest(result.Errors);
+
             model.Id = Guid.NewGuid().ToString();
             
             _context.Categories.Add(model);
