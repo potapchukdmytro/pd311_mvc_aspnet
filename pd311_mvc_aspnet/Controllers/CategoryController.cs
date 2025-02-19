@@ -1,22 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using pd311_mvc_aspnet.Data;
 using pd311_mvc_aspnet.Models;
-using pd311_mvc_aspnet.Validation;
 
 namespace pd311_mvc_aspnet.Controllers
 {
-    public class CategoryController : Controller
+    public class CategoryController(AppDbContext context) : Controller
     {
-        private readonly AppDbContext _context;
-
-        public CategoryController(AppDbContext context) 
-        {
-            _context = context;
-        }
-
         public IActionResult Index()
         {
-            var categories = _context.Categories.AsEnumerable();
+            var categories = context.Categories.AsEnumerable();
             return View(categories);
         }
 
@@ -29,29 +21,27 @@ namespace pd311_mvc_aspnet.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Category model)
         {
-            var validator = new CategoryValidator();
+            if (ModelState.IsValid)
+            {
+                model.Id = Guid.NewGuid().ToString();
 
-            var result = validator.Validate(model);
+                context.Categories.Add(model);
+                context.SaveChanges();
 
-            if (!result.IsValid)
-                return BadRequest(result.Errors);
-
-            model.Id = Guid.NewGuid().ToString();
-            
-            _context.Categories.Add(model);
-            _context.SaveChanges();
-
-            return RedirectToAction("Index");
+                return RedirectToAction("Index");
+            }
+            else
+                return View(model);
         }
 
         public IActionResult Update(string? id)
         {
-            if(id == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var category = _context.Categories.FirstOrDefault(c => c.Id == id);
+            var category = context.Categories.FirstOrDefault(c => c.Id == id);
 
             if (category == null)
             {
@@ -65,10 +55,15 @@ namespace pd311_mvc_aspnet.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Update(Category model)
         {
-            _context.Categories.Update(model);
-            _context.SaveChanges();
+            if (ModelState.IsValid)
+            {
+                context.Categories.Update(model);
+                context.SaveChanges();
 
-            return RedirectToAction("Index");
+                return RedirectToAction("Index");
+            }
+            else
+                return View(model);
         }
 
         public IActionResult Delete(string? id)
@@ -78,7 +73,7 @@ namespace pd311_mvc_aspnet.Controllers
                 return NotFound();
             }
 
-            var category = _context.Categories.FirstOrDefault(c => c.Id == id);
+            var category = context.Categories.FirstOrDefault(c => c.Id == id);
 
             if (category == null)
             {
@@ -92,8 +87,8 @@ namespace pd311_mvc_aspnet.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(Category model)
         {
-            _context.Categories.Remove(model);
-            _context.SaveChanges();
+            context.Categories.Remove(model);
+            context.SaveChanges();
 
             return RedirectToAction("Index");
         }

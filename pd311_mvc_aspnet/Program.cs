@@ -3,6 +3,7 @@ using pd311_mvc_aspnet.Data.Initializer;
 using pd311_mvc_aspnet.Data;
 using pd311_mvc_aspnet.Repositories.Products;
 using pd311_mvc_aspnet.Services.Image;
+using pd311_mvc_aspnet.Repositories.Categories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddScoped<IImageService, ImageService>();
 
 // Add repositories
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 // Add database context
 builder.Services.AddDbContext<AppDbContext>(options =>

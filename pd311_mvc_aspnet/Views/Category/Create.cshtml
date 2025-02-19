@@ -8,6 +8,9 @@
             <div class="col-sm-10">
                 <input type="text" class="form-control" asp-for="Name">
             </div>
+            <div class="px-4">
+                <span class="form-error" asp-validation-for="Name"></span>
+            </div>
         </div>
         <div style="margin: 15px 0; display: flex; padding: 5px;">
             <input style="flex-grow: 1; margin: 5px;" type="submit" class="btn btn-success" value="Створити" />

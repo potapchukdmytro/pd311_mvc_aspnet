@@ -2,12 +2,9 @@
 
 namespace pd311_mvc_aspnet.Repositories.Products
 {
-    public interface IProductRepository
+    public interface IProductRepository 
+        : IGenericRepository<Product, string>
     {
-        Task<bool> CreateAsync(Product model);
-        Task<bool> UpdateAsync(Product model);
-        Task<bool> DeleteAsync(string id);
-        Task<List<Product>> GetAllAsync();
-        Task<Product?> FindByIdAsync(string id);
+        IQueryable<Product> Products { get; }
     }
 }
