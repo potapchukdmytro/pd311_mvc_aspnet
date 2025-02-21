@@ -19,7 +19,7 @@ namespace pd311_mvc_aspnet.Repositories.Products
                 .Where(p => p.Category == null
                 ? false
                 : p.Category.Name == null ? false 
-                : p.Category.Name.Equals(categoryName, StringComparison.InvariantCultureIgnoreCase));
+                : p.Category.Name.ToLower() == categoryName.ToLower());
         }
     }
 }

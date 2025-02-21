@@ -19,7 +19,9 @@ namespace pd311_mvc_aspnet.Repositories.Categories
         public async Task<Category?> FindByNameAsync(string name)
         {
             var category = await _context.Categories
-                .FirstOrDefaultAsync(c => c.Name == null ? false : c.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+                .FirstOrDefaultAsync(c => c.Name == null 
+                ? false 
+                : c.Name.ToLower() == name.ToLower());
             return category;
         }
     }

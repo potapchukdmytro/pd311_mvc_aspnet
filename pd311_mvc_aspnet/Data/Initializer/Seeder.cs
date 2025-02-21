@@ -30,8 +30,8 @@ namespace pd311_mvc_aspnet.Data.Initializer
 
                 var products = new List<Product>
                     {
-                        new() { Id = Guid.NewGuid().ToString(), Name = "Asus PRIME B650M-K (sAM5, AMD B650, PCI-Ex16)", Amount = 5, Price = 100, CategoryId = categories[1].Id },
-                        new() { Id = Guid.NewGuid().ToString(), Name = "AMD Ryzen 5 5600 3.5-4.4GHz", Amount = 5, Price = 100, CategoryId = categories[0].Id }
+                        new() { Id = Guid.NewGuid().ToString(), Name = "Asus PRIME B650M-K (sAM5, AMD B650, PCI-Ex16)", Amount = 5, Price = 4799, CategoryId = categories[1].Id },
+                        new() { Id = Guid.NewGuid().ToString(), Name = "AMD Ryzen 5 5600 3.5-4.4GHz", Amount = 5, Price = 4499, CategoryId = categories[0].Id }
                     };
 
                 context.Products.AddRange(products);
