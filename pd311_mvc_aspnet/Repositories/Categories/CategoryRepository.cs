@@ -7,9 +7,20 @@ namespace pd311_mvc_aspnet.Repositories.Categories
     public class CategoryRepository
         : GenericRepository<Category, string>, ICategoryRepository
     {
+        private readonly AppDbContext _context;
         public CategoryRepository(AppDbContext context)
-            : base(context) { }
+            : base(context) 
+        {
+            _context = context;
+        }
 
         public IQueryable<Category> Categories => GetAll().Include(c => c.Products);
+
+        public async Task<Category?> FindByNameAsync(string name)
+        {
+            var category = await _context.Categories
+                .FirstOrDefaultAsync(c => c.Name == null ? false : c.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+            return category;
+        }
     }
 }

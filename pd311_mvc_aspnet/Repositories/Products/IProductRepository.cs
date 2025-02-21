@@ -6,5 +6,6 @@ namespace pd311_mvc_aspnet.Repositories.Products
         : IGenericRepository<Product, string>
     {
         IQueryable<Product> Products { get; }
+        IQueryable<Product> GetByCategory(string categoryName);
     }
 }

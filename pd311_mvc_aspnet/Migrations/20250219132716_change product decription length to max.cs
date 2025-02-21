@@ -5,7 +5,7 @@
 namespace pd311_mvc_aspnet.Migrations
 {
     /// <inheritdoc />
-    public partial class changeproductdecriptionlengthtomax : Migration
+    public partial class Changeproductdecriptionlengthtomax : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

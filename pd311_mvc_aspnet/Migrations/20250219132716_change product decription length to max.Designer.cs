@@ -12,7 +12,7 @@ namespace pd311_mvc_aspnet.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20250219132716_change product decription length to max")]
-    partial class changeproductdecriptionlengthtomax
+    partial class Changeproductdecriptionlengthtomax
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -12,5 +12,14 @@ namespace pd311_mvc_aspnet.Repositories.Products
         { }
 
         public IQueryable<Product> Products => GetAll().Include(p => p.Category);
+
+        public IQueryable<Product> GetByCategory(string categoryName)
+        {
+            return Products
+                .Where(p => p.Category == null
+                ? false
+                : p.Category.Name == null ? false 
+                : p.Category.Name.Equals(categoryName, StringComparison.InvariantCultureIgnoreCase));
+        }
     }
 }
