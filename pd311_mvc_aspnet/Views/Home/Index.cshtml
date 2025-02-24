@@ -14,36 +14,52 @@
             }
         </div>
         <div class="row">
-            @foreach (var product in Model.Products)
+            @foreach (var viewModel in Model.Products)
             {
                 <div class="col-md-12 col-lg-3 mb-4 mb-lg-2 home-product-card">
-                    <a asp-action="Details" asp-route-id="@product.Id" class="text-decoration-none d-block">
-                        <div class="card shadow h-100">
-                            <div class="d-flex justify-content-between p-3">
-                                <p style="color: black" class="lead mb-0">Today's Combo Offer</p>
-                            </div>
+                    <div class="card shadow h-100">
+                        <div class="d-flex justify-content-between p-3">
+                            <p style="color: black" class="lead mb-0">Today's Combo Offer</p>
+                        </div>
+                        <a asp-action="Details" asp-route-id="@viewModel.Product.Id" class="text-decoration-none d-block">
                             <div class="text-center">
-                                <img style="max-width: 200px" src="~/images/products/@(product.Image ?? "default.png")"
-                                     class="card-img-top" alt="@product.Name" />
+                                <img style="max-width: 200px" src="~/images/products/@(viewModel.Product.Image ?? "default.png")"
+                                class="card-img-top" alt="@viewModel.Product.Name" />
                             </div>
-                            <div class="card-body">
-                                <div class="d-flex justify-content-start">
-                                    <p class="small">
-                                        <a href="@Url.Action("Index", new { category = product.Category?.Name })" class="text-muted">@product.Category?.Name</a>
-                                    </p>
-                                </div>
+                        </a>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-start">
+                                <p class="small">
+                                    <a href="@Url.Action("Index", new { category = viewModel.Product.Category?.Name })" class="product-card-link">@viewModel.Product.Category?.Name</a>
+                                </p>
+                            </div>
 
-                                <div class="d-flex justify-content-between mb-3">
-                                    <h6 class="mb-0 me-1">@product.Name</h6>
-                                    <h5 class="text-dark mb-0">@product.Price₴</h5>
-                                </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <a asp-action="Details" asp-route-id="@viewModel.Product.Id" class="text-decoration-none d-block">
+                                    <h6 style="color: black;" class="mb-0 me-1">@viewModel.Product.Name</h6>
+                                </a>
+                                <h5 class="text-dark mb-0">@viewModel.Product.Price₴</h5>
+                            </div>
 
-                                <div class="d-flex justify-content-between mb-2">
-                                    <p class="text-muted mb-0">Available: <span class="fw-bold">@product.Amount</span></p>
-                                </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <p class="text-muted mb-0">Available: <span class="fw-bold">@viewModel.Product.Amount</span></p>
+                            </div>
+                            <div>
+                                @if(!viewModel.InCart)
+                                {
+                                    <button onclick="addToCart('@viewModel.Product.Id')" class="btn btn-warning">
+                                        <i class="bi bi-cart-plus-fill"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button onclick="removeFromCart('@viewModel.Product.Id')" class="btn btn-danger">
+                                        <i class="bi bi-cart-dash-fill"></i>
+                                    </button>
+                                }
                             </div>
                         </div>
-                    </a>
+                    </div>
                 </div>
             }
         </div>
@@ -59,11 +75,14 @@
                 </a>
             </li>
         }
-        @for (int i = 1; i <= Model.PagesCount; i++)
+        @if(Model.PagesCount > 1)
         {
-            <li class="page-item @(i == Model.Page ? "active" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { category = Model.Category, page = i })">@i</a>
-            </li>
+            @for (int i = 1; i <= Model.PagesCount; i++)
+            {
+                <li class="page-item @(i == Model.Page ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { category = Model.Category, page = i })">@i</a>
+                </li>
+            }
         }
         @if (Model.Page < Model.PagesCount)
         {

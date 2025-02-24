@@ -30,31 +30,15 @@ body {
     transition: transform 0.3s ease-in-out;
 }
 
-    .home-product-card:hover {
-        transform: scale(1.02, 1.02);
-        cursor: pointer;
-    }
-
-.pagination > li > a {
-    background-color: white;
-    color: green;
+.home-product-card:hover {
+    transform: scale(1.02, 1.02);
+    cursor: pointer;
 }
 
-    .pagination > li > a:focus,
-    .pagination > li > a:hover,
-    .pagination > li > span:focus,
-    .pagination > li > span:hover {
-        color: darkgreen;
-        background-color: #eee;
-        border-color: #ddd;
-    }
-
-.pagination > .active > a {
-    background-color: green;
-    border: solid 1px green;
+.product-card-link {
+    color: grey;
 }
 
-    .pagination > .active > a:hover {
-        background-color: green;
-        border: solid 1px green;
-    }
+.product-card-link:hover {
+    color: red;
+}

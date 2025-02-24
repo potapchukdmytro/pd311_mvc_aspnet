@@ -4,7 +4,7 @@ namespace pd311_mvc_aspnet.ViewModels
 {
     public class HomeProductsListVM
     {
-        public IEnumerable<Product> Products { get; set; } = [];
+        public IEnumerable<HomeProductVM> Products { get; set; } = [];
         public IEnumerable<Category> Categories { get; set; } = [];
         public string? Category { get; set; } = "";
         public int Page { get; set; } = 1;

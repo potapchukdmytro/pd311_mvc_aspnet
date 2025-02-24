@@ -2,3 +2,34 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+function addToCart(productId) {
+    fetch("/Cart/AddToCart", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ productId: productId })
+    })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            }
+        })
+        .catch(error => console.error(error));
+}
+
+function removeFromCart(productId) {
+    fetch("/Cart/RemoveFromCart", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ productId: productId })
+    })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            }
+        })
+        .catch(error => console.error(error));
+}
