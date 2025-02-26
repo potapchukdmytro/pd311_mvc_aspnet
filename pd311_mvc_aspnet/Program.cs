@@ -5,6 +5,8 @@ using pd311_mvc_aspnet.Repositories.Products;
 using pd311_mvc_aspnet.Services.Image;
 using pd311_mvc_aspnet.Repositories.Categories;
 using pd311_mvc_aspnet.Services.Cart;
+using Microsoft.AspNetCore.Identity;
+using pd311_mvc_aspnet.Models.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,20 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer("name=SQLServerLocal");
 });
+
+// Add identity
+builder.Services
+    .AddIdentity<AppUser, IdentityRole>(options =>
+    {
+        options.Password.RequiredUniqueChars = 0;
+        options.Password.RequiredLength = 6;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireDigit = false;
+    })
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders()
+    .AddDefaultUI();
 
 // Add session
 builder.Services.AddSession(options =>
@@ -47,9 +63,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseSession();
+
+app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",

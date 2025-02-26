@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using pd311_mvc_aspnet.Data;
 using pd311_mvc_aspnet.Models;
 using pd311_mvc_aspnet.Repositories.Categories;
 using pd311_mvc_aspnet.Repositories.Products;

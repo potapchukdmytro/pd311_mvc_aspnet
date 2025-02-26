@@ -1,11 +1,13 @@
 using System.Diagnostics;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using pd311_mvc_aspnet.Models;
+using pd311_mvc_aspnet.Models.Identity;
 using pd311_mvc_aspnet.Repositories.Categories;
 using pd311_mvc_aspnet.Repositories.Products;
 using pd311_mvc_aspnet.Services.Cart;
-using pd311_mvc_aspnet.Services.Session;
 using pd311_mvc_aspnet.ViewModels;
 
 namespace pd311_mvc_aspnet.Controllers
@@ -16,13 +18,17 @@ namespace pd311_mvc_aspnet.Controllers
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly ICartService _cartService;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public HomeController(ILogger<HomeController> logger, IProductRepository productRepository, ICategoryRepository categoryRepository, ICartService cartService)
+        public HomeController(ILogger<HomeController> logger, IProductRepository productRepository, ICategoryRepository categoryRepository, ICartService cartService, UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _logger = logger;
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
             _cartService = cartService;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public IActionResult Index(string? category = "", int page = 1)
@@ -76,6 +82,31 @@ namespace pd311_mvc_aspnet.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public IActionResult AddToAdmin()
+        {
+            var idClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            string userId = string.Empty;
+
+            if (idClaim != null)
+                userId = idClaim.Value;
+
+            var user = _userManager.FindByIdAsync(userId).Result;
+
+            if(user != null)
+            {
+                if (!_roleManager.RoleExistsAsync("admin").Result)
+                {
+                    _roleManager.CreateAsync(new IdentityRole
+                    {
+                        Name = "admin"
+                    }).Wait();
+                }
+                _userManager.AddToRoleAsync(user, "admin").Wait();
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }
