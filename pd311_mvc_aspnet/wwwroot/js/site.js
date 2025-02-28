@@ -65,3 +65,10 @@ function minusQuaintity(productId, quaintity) {
         })
         .catch(error => console.error(error));
 }
+
+function checkoutHandler() {
+    fetch("/Cart/MinusQuaintity", {
+        method: "POST"
+    })
+        .catch(error => console.error(error));
+}

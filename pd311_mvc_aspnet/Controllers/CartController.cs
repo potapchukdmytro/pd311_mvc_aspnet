@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using pd311_mvc_aspnet.Repositories.Products;
 using pd311_mvc_aspnet.Services.Cart;
+using pd311_mvc_aspnet.Services.Session;
 using pd311_mvc_aspnet.ViewModels;
 
 namespace pd311_mvc_aspnet.Controllers
@@ -92,6 +94,27 @@ namespace pd311_mvc_aspnet.Controllers
             {
                 return BadRequest();
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Checkout()
+        {
+            var cartItems = _cartService.GetItems();
+            var products = _productRepository
+                .GetAll()
+                .AsNoTracking()
+                .Where(p => cartItems.Select(i => i.ProductId).Contains(p.Id))
+                .ToList();
+
+            foreach (var product in products)
+            {
+                product.Amount -= cartItems.First(i => i.ProductId == product.Id).Quaintity;
+                await _productRepository.UpdateAsync(product);
+            }
+
+            HttpContext.Session.Set<IEnumerable<CartItemVM>>(Settings.SessionCartKey, new List<CartItemVM>());
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

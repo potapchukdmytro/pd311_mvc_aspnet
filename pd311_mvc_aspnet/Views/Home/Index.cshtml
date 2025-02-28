@@ -42,21 +42,32 @@
                             </div>
 
                             <div class="d-flex justify-content-between mb-2">
-                                <p class="text-muted mb-0">Available: <span class="fw-bold">@viewModel.Product.Amount</span></p>
-                            </div>
-                            <div>
-                                @if(!viewModel.InCart)
+                                @if (viewModel.Product.Amount == 0)
                                 {
-                                    <button onclick="addToCart('@viewModel.Product.Id')" class="btn btn-warning">
-                                        <i class="bi bi-cart-plus-fill"></i>
-                                    </button>
+                                    <p class="text-muted mb-0">Not available</p>
+
                                 }
                                 else
                                 {
-                                    <button onclick="removeFromCart('@viewModel.Product.Id')" class="btn btn-danger">
-                                        <i class="bi bi-cart-dash-fill"></i>
-                                    </button>
+                                    <p class="text-muted mb-0">Available: <span class="fw-bold">@viewModel.Product.Amount</span></p>
                                 }
+                            </div>
+                            <div>
+                                @if(viewModel.Product.Amount > 0)
+                                {
+                                    @if (!viewModel.InCart)
+                                    {
+                                        <button onclick="addToCart('@viewModel.Product.Id')" class="btn btn-warning">
+                                            <i class="bi bi-cart-plus-fill"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button onclick="removeFromCart('@viewModel.Product.Id')" class="btn btn-danger">
+                                            <i class="bi bi-cart-dash-fill"></i>
+                                        </button>
+                                    }
+                                }   
                             </div>
                         </div>
                     </div>
