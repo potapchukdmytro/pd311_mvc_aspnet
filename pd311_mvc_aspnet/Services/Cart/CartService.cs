@@ -1,4 +1,5 @@
-﻿using pd311_mvc_aspnet.Services.Session;
+﻿using Microsoft.EntityFrameworkCore.Diagnostics;
+using pd311_mvc_aspnet.Services.Session;
 using pd311_mvc_aspnet.ViewModels;
 
 namespace pd311_mvc_aspnet.Services.Cart
@@ -60,6 +61,43 @@ namespace pd311_mvc_aspnet.Services.Cart
 
             items = items.Where(i => i.ProductId != viewModel.ProductId);
             session.Set(Settings.SessionCartKey, items);
+        }
+
+        public IEnumerable<string> GetItemsAsString()
+        {
+            return GetItems().Select(i => i.ProductId);
+        }
+
+        public void IncreaseQuaintity(string productId)
+        {
+            var items = GetItems();
+            var item = items.FirstOrDefault(i => i.ProductId == productId);
+            if (item != null)
+            {
+                item.Quaintity++;
+                var context = _httpContextAccessor.HttpContext;
+                if (context == null)
+                    return;
+                var session = context.Session;
+
+                session.Set(Settings.SessionCartKey, items);
+            }
+        }
+
+        public void DecreaseQuaintity(string productId)
+        {
+            var items = GetItems();
+            var item = items.FirstOrDefault(i => i.ProductId == productId);
+            if (item != null)
+            {
+                item.Quaintity--;
+                var context = _httpContextAccessor.HttpContext;
+                if (context == null)
+                    return;
+                var session = context.Session;
+
+                session.Set(Settings.SessionCartKey, items);
+            }
         }
     }
 }

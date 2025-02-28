@@ -33,3 +33,35 @@ function removeFromCart(productId) {
         })
         .catch(error => console.error(error));
 }
+
+function addQuaintity(productId, quaintity) {
+    fetch("/Cart/AddQuaintity", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ productId: productId, quaintity: quaintity })
+    })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            }
+        })
+        .catch(error => console.error(error));
+}
+
+function minusQuaintity(productId, quaintity) {
+    fetch("/Cart/MinusQuaintity", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ productId: productId, quaintity: quaintity })
+    })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            }
+        })
+        .catch(error => console.error(error));
+}

@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using pd311_mvc_aspnet.Models;
+using pd311_mvc_aspnet.Models.Identity;
 
 namespace pd311_mvc_aspnet.Data.Initializer
 {
@@ -11,9 +13,54 @@ namespace pd311_mvc_aspnet.Data.Initializer
 
             var context = scope.ServiceProvider.GetService<AppDbContext>()
                                    ?? throw new ArgumentNullException("Db context is null");
+            var userManger = scope.ServiceProvider.GetService<UserManager<AppUser>>()
+                                    ?? throw new ArgumentNullException("UserManager is null");
+            var roleManger = scope.ServiceProvider.GetService<RoleManager<IdentityRole>>()
+                                    ?? throw new ArgumentNullException("RoleManager is null");
 
             context.Database.Migrate();
 
+            // Roles and Users
+            if(!roleManger.Roles.Any())
+            {
+                var roles = new List<IdentityRole>
+                {
+                    new(){ Name = Settings.RoleAdmin },
+                    new(){ Name = Settings.RoleUser }
+                };
+
+                roleManger.CreateAsync(roles[0]).Wait();
+                roleManger.CreateAsync(roles[1]).Wait();
+            }
+
+            if(!userManger.Users.Any())
+            {
+                var admin = new AppUser
+                {
+                    Email = "admin@gmail.com",
+                    UserName = "admin",
+                    FirstName = "admin",
+                    LastName = "admin",
+                    EmailConfirmed = true
+                };
+
+                var user = new AppUser
+                {
+                    Email = "user@gmail.com",
+                    UserName = "user",
+                    FirstName = "user",
+                    LastName = "user",
+                    EmailConfirmed = true
+                };
+
+                userManger.CreateAsync(admin, "qwerty").Wait();
+                userManger.CreateAsync(user, "qwerty").Wait();
+
+                userManger.AddToRoleAsync(admin, Settings.RoleAdmin).Wait();
+                userManger.AddToRoleAsync(user, Settings.RoleUser).Wait();
+            }
+
+            // Categories and Products
             if (!context.Categories.Any())
             {
                 var categories = new List<Category>
